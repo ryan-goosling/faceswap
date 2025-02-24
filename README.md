@@ -93,4 +93,4 @@ python src/infer.py \
 | ![source](assets/image2.jpg)    | ![target](assets/target2.jpg)   | ![output](results/result2.jpg)  |
 | ![source](assets/image3.jpg)    | ![target](assets/target3.jpg)   | ![output](results/result3.jpg)  |
 
-*(Replace the example images with your own to demonstrate the face swap process.)*
+
