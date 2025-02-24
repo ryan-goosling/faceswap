@@ -20,10 +20,10 @@ python src/infer.py \
   --output_path my_result.jpg
 ```
 
-## Pipeline idea
+## Architecture overview & Pipeline idea
 
 1. **Data preprocessing**
-![Image Preprocessed](assets/image_preprocessed.jpg)
+![Image Preprocessed](assets/image_preprocessing.jpg)
    - Initially, the provided reference images did not all meet the criteria. One image was discarded due to strong glare on the eyes, bright lipstick, and an overall deviation from the desired style.
    - The remaining images were retouched to reduce the appearance of wrinkles, acne, and bags under the eyes.
    - All images were cropped to a 1024x1024 ratio to ensure consistency and compatibility with the model.
