@@ -30,6 +30,7 @@ python src/infer.py \
 
 3. **Learning the LoRA model**  
    - The LoRA model was fine-tuned using carefully selected learning parameters, and the results were saved on HuggingFace.
+   Check the trained model on HuggingFace: [Glam Person Initial LoRA](https://huggingface.co/biglebowski/glam_person_initial).
    - Fundamental parameters include a small learning rate (`2e-5`) for precise fine-tuning, a resolution of `1024` matching the preprocessed images, and a maximum of `800` training steps to prevent overfitting.
    - Additional parameters like gradient accumulation steps and gradient checkpointing were employed to stabilize training and efficiently manage memory.
    - Training command:
@@ -56,7 +57,7 @@ python src/infer.py \
        --seed="42"
      ```
 
-4. **Image processing**
+5. **Image processing**
 
    3.1 **Extracting the face mask of the input image**  
    - Although not implemented in the code, extracting a face mask is feasible using models like GroundingDINO combined with SAM.
@@ -79,7 +80,7 @@ python src/infer.py \
      - `denoising_strength`: 0.75  
      were chosen to strike a balance between detail preservation and smooth inpainting.
 
-5. **Image post-processing**  
+6. **Image post-processing**  
    - Although not implemented in the current code, post-processing steps could involve using various refiners to enhance facial aesthetics.
    - Preliminary tests with different refiners did not yield the desired results, indicating that further experimentation is needed for optimal enhancement.
 
