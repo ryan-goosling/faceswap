@@ -1,1 +1,8 @@
-# init repos
+torch
+diffusers
+accelerate
+transformers
+opencv-python
+Pillow
+numpy
+peft
