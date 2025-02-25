@@ -1,7 +1,7 @@
 # FaceSwap
-| Source Image  | Output Image    | Source Image      | Output Image         | Source Image     | Output Image     |
-|---------------|-----------------|-------------------|----------------------|------------------|------------------|
-| ![target](assets/image1.jpg)   | ![output](assets/result1.jpg)  | ![target](assets/image2.jpg)   | ![output](assets/result2.jpg)  | ![target](assets/image3.jpg)   | ![output](assets/result3.jpg)  |
+| Source Image  | Output Image    |
+|---------------|-----------------|
+| ![target](assets/image1.jpg)   | ![output](assets/result1.jpg)  |
 ## Installation
 
 Git clone, Create env, install requirements
@@ -26,12 +26,13 @@ Load weights
 sh download.sh
 ```
 ## Run
+
 ```bash
-python src/infer.py \
-  --image_path assets/image1.jpg \
-  --mask_path assets/mask1.jpg \
-  --seed 292 \
-  --output_path my_result.jpg
+python3 src/infer.py --image_path path/to/your/img.jpg 
+```
+or you can with
+```bash
+streamlit run src/streamlit_app.py 
 ```
 
 ## Architecture overview & Pipeline idea
@@ -45,30 +46,32 @@ python src/infer.py \
 3. **Learning the LoRA model**  
    - The LoRA model was fine-tuned using carefully selected learning parameters, and the results were saved on HuggingFace.
    Check the trained model on HuggingFace: [Glam Person Initial LoRA](https://huggingface.co/biglebowski/glam_person_initial).
-   - Fundamental parameters include a small learning rate (`2e-5`) for precise fine-tuning, a resolution of `1024` matching the preprocessed images, and a maximum of `800` training steps to prevent overfitting.
+   - Fundamental parameters include a small learning rate (`2e-5`) for precise fine-tuning, a resolution of `1024` matching the preprocessed images, and a maximum of `500` training steps to prevent overfitting.
    - Additional parameters like gradient accumulation steps and gradient checkpointing were employed to stabilize training and efficiently manage memory.
    - Training command:
      ```
+     #!/usr/bin/env bash
      !accelerate launch train_dreambooth_lora_sdxl.py \
        --pretrained_model_name_or_path="stabilityai/stable-diffusion-xl-base-1.0" \
        --pretrained_vae_model_name_or_path="madebyollin/sdxl-vae-fp16-fix" \
-       --instance_data_dir="glam_person_images/" \
-       --output_dir="glam_person" \
-       --caption_column="text" \
+       --dataset_name="data" \
+       --output_dir="glam_person_lora" \
+       --caption_column="prompt"\
        --mixed_precision="fp16" \
-       --instance_prompt="photo of a TOK person" \
+       --instance_prompt="a photo of STRLK person" \
        --resolution=1024 \
        --train_batch_size=1 \
-       --gradient_accumulation_steps=4 \
+       --gradient_accumulation_steps=1 \
        --gradient_checkpointing \
-       --learning_rate=2e-5 \
-       --snr_gamma=3.0 \
-       --lr_scheduler="cosine_with_restarts" \
-       --lr_warmup_steps=50 \
+       --learning_rate=1e-4 \
+       --snr_gamma=5.0 \
+       --lr_scheduler="constant" \
+       --lr_warmup_steps=0 \
+       --mixed_precision="fp16" \
        --use_8bit_adam \
-       --max_train_steps=800 \
-       --checkpointing_steps=200 \
-       --seed="42"
+       --max_train_steps=500 \
+       --checkpointing_steps=717 \
+       --seed="0"
      ```
 
 5. **Image processing**
