@@ -30,6 +30,7 @@ sh download.sh
 ```bash
 python3 src/infer.py --image_path path/to/your/img.jpg 
 ```
+result image will store at /assets/
 or you can with
 ```bash
 streamlit run src/streamlit_app.py 
