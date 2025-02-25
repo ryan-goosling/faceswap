@@ -6,3 +6,4 @@ opencv-python
 Pillow
 numpy
 peft
+streamlit

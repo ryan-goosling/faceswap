@@ -42,12 +42,11 @@ def load_pipeline(cfg):
     return pipe
 
 
-def run_inference(pipe, cfg, image, mask, control_pil, seed=292):
+def run_inference(pipe, cfg, image, mask, control_pil):
     """
     Launches the inpainting process according to the parameters in cfg.
     Returns the generated image (PIL.Image).
     """
-    #generator = torch.Generator(device=cfg["device"]).manual_seed(seed)
 
     result = pipe(
         prompt=cfg["prompt"],
@@ -61,7 +60,6 @@ def run_inference(pipe, cfg, image, mask, control_pil, seed=292):
         strength=cfg["strength"],
         inpaint_strength=cfg["inpaint_strength"],
         denoising_strength=cfg["denoising_strength"]
-        #generator=generator
     )
 
     return result.images[0]

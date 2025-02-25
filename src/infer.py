@@ -2,56 +2,83 @@ import argparse
 import cv2
 import numpy as np
 import PIL
+from PIL import Image, ImageFilter
+import os
+import subprocess
 
 from config import CONFIG
 from pipeline import load_pipeline, run_inference
-from utils import prepare_color_canny, crop_to_75_percent_face, paste_back
+from image_processing import (paste_back,
+                              detect_and_crop_face,
+                              prepare_control_img)
 
 def main():
     parser = argparse.ArgumentParser(description="SDXL Inpainting with ControlNet (Canny).")
     parser.add_argument("--image_path", type=str, required=True, help="Path to the original RGB image.")
-    parser.add_argument("--mask_path", type=str, required=True, help="Path to the mask image (L channel).")
-    parser.add_argument("--seed", type=int, default=292, help="Random seed for reproducibility.")
-    parser.add_argument("--output_path", type=str, default="inpainted_result.jpg", help="Path to save the result.")
-    parser.add_argument("--use_color_canny", action="store_true", help="Use the color-canny function from utils.py")
 
     args = parser.parse_args()
 
-    # 1. Load the original image and mask
+    # Load the original image and mask
     image = PIL.Image.open(args.image_path).convert("RGB")
-    mask = PIL.Image.open(args.mask_path).convert("L")
+    image_np = np.array(image)
 
-    # Example of optional cropping (uncomment if needed)
-    # image = PIL.Image.fromarray(np.array(image)[100:1124, 100:1124])
-    # mask = PIL.Image.fromarray(np.array(mask)[100:1124, 100:1124])
+    bbox, mask = detect_and_crop_face(image_np[:,:,::-1], scale_factor=2)
+    cropped_face = image.crop(bbox)
+    
+    # Create necessary directories
+    os.makedirs("tmp/images", exist_ok=True)
+    os.makedirs("tmp/mask", exist_ok=True)
 
-    # 2. Generate the "control_image" (Canny)
-    if args.use_color_canny:
-        # We use the function from utils.py (semi-colored effect)
-        control_pil = prepare_color_canny(np.array(image)[:, :, ::-1])
-    else:
-        # Regular Canny (black & white)
-        control_input = cv2.Canny(np.array(image), 150, 200)
-        control_input = cv2.cvtColor(control_input, cv2.COLOR_GRAY2RGB)
-        control_pil = PIL.Image.fromarray(control_input)
+    # Load the original image and save it
+    image = Image.open(args.image_path).convert("RGB")
+    cropped_face.save("tmp/images/img.jpg")
 
-    # 3. Initialize the pipeline (all parameters come from config.py)
+    # Run the inference script
+    subprocess.run([
+        "python", "src/face_parser.py",
+        "--model", "resnet18",
+        "--weight", "face-parsing/weights/resnet18.pt",
+        "--input", "tmp/images",
+        "--output", "tmp/mask"
+    ])
+
+    # Load the binary mask
+    mask = Image.open("tmp/mask/img.jpg").convert("L")
+    mask = mask.filter(ImageFilter.MaxFilter(size=3))
+
+    # Regular Canny (black & white)
+    control_pil = prepare_control_img(image)
+
+    # To same image size
+    cropped_mask = mask.resize((1024, 1024))
+    cropped_control = control_pil.crop((bbox)).resize((1024, 1024))
+    cropped_image = cropped_face.resize((1024, 1024))
+
+    # Initialize the pipeline (all parameters come from config.py)
+    # Run inference
     pipe = load_pipeline(CONFIG)
+    
+    inpainted_crop = run_inference(pipe, CONFIG, cropped_image, cropped_mask, cropped_control)
+    
+    # Debug visualisation
+    cropped_mask.save("mask.jpg")
+    cropped_control.save("control.jpg")
+    cropped_image.save("img.jpg")
+    inpainted_crop.save("inpainted.jpg")
 
-    cropped_image, cropped_mask, cropped_control, crop_coords = crop_to_75_percent_face(image, mask, control_pil)
-    # 4. Run inference
-    inpainted_crop = run_inference(pipe, CONFIG, cropped_image, cropped_mask, cropped_control, seed=args.seed)
-
-    inpainted_image = paste_back(image, inpainted_crop, crop_coords)
+    # Get final result with source image
+    inpainted_image = paste_back(image, inpainted_crop, bbox)
 
     filename_params = (
         f"steps{CONFIG['num_inference_steps']}_"
         f"scale{CONFIG['controlnet_conditioning_scale']}_"
         f"guidance{CONFIG['guidance_scale']}_"
-        f"denoise{CONFIG['denoising_strength']}"
+        f"denoise{CONFIG['denoising_strength']}_"
+        f"inpaint{CONFIG['inpaint_strength']}_"
+        f"prompt:{CONFIG['prompt']}"
     )
-    filename = f"results/prompt_{str(args.image_path).split('/')[-1][:-4]}_{filename_params}.jpg"
-    # 5. Save the result
+    filename = f"results/{str(args.image_path).split('/')[-1][:-4]}_{filename_params}.jpg"
+    # Save the result
     inpainted_image.save(filename)
     print(f"Result saved at {filename}")
 
