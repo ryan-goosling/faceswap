@@ -87,10 +87,10 @@ python src/infer.py \
 
 ## Example Results
 
-| Source Image                    | Target Image                    | Output Image                    |
+| Target Image                    | Source Image                    | Output Image                    |
 |---------------------------------|---------------------------------|---------------------------------|
-| ![source](assets/image1.jpg)    | ![target](assets/target1.jpg)   | ![output](assets/result1.jpg)  |
-| ![source](assets/image2.jpg)    | ![target](assets/target2.jpg)   | ![output](assets/result2.jpg)  |
-| ![source](assets/image3.jpg)    | ![target](assets/target3.jpg)   | ![output](assets/result3.jpg)  |
+| ![source](assets/target1.jpg)    | ![target](assets/image1.jpg)   | ![output](assets/result1.jpg)  |
+| ![source](assets/target2.jpg)    | ![target](assets/image2.jpg)   | ![output](assets/result2.jpg)  |
+| ![source](assets/target3.jpg)    | ![target](assets/image3.jpg)   | ![output](assets/result3.jpg)  |
 
 
