@@ -45,8 +45,8 @@ streamlit run src/streamlit_app.py
 
 3. **Learning the LoRA model**  
    - The LoRA model was fine-tuned using carefully selected learning parameters, and the results were saved on HuggingFace.
-   Check the trained model on HuggingFace: [Glam Person Initial LoRA](https://huggingface.co/biglebowski/glam_person_initial).
-   - Fundamental parameters include a small learning rate (`2e-5`) for precise fine-tuning, a resolution of `1024` matching the preprocessed images, and a maximum of `500` training steps to prevent overfitting.
+   Check the trained model on HuggingFace: [Glam Person LoRA](https://huggingface.co/biglebowski/glam_person_lora).
+   - Fundamental parameters include a small learning rate (`1e-4`) for precise fine-tuning, a resolution of `1024` matching the preprocessed images, and a maximum of `500` training steps to prevent overfitting.
    - Additional parameters like gradient accumulation steps and gradient checkpointing were employed to stabilize training and efficiently manage memory.
    - Training command:
      ```
@@ -75,10 +75,10 @@ streamlit run src/streamlit_app.py
      ```
 
 5. **Image processing**
-
-   3.1 **Extracting the face mask of the input image**  
-   - Although not implemented in the code, extracting a face mask is feasible using models like GroundingDINO combined with SAM.
-   - Pre-prepared masks were generated using the resource: [Grounded SAM on Replicate](https://replicate.com/schananas/grounded_sam).
+   ![Image Preprocessed](assets/canny_mask.jpg)
+   3.1 **Extracting the crop face mask of the input image**  
+   - Using BiSeNet model to extract mask we need to crop face to generalise predictoins
+   - Pre-prepared masks were generated using the resource: [face-parsing](https://github.com/yakhyo/face-parsing).
 
    3.2 **Preparation of canny edges for inpainting control**  
    - Canny edge detection is applied to generate control images for the inpainting process.
@@ -87,14 +87,14 @@ streamlit run src/streamlit_app.py
    3.3 **Using a pipeline with preset models**  
    - The pipeline utilizes a `StableDiffusionXLControlNetInpaintPipeline` that integrates a VAE, a ControlNet model, and LoRA weights.
    - This design leverages pretrained models to guide the inpainting process effectively.
-   - A balanced set of parameters and prompts is crucial. The positive prompt "photo of a TOK person, natural, 8k" combined with a carefully crafted negative prompt (e.g., "blurry, low quality, low contrast, oversaturated colors, unrealistic plastic skin, gloss, plastic, distorted, bad anatomy, low resolution, noisy") helps filter out undesirable artifacts.
+   - A balanced set of parameters and prompts is crucial. The positive prompt "STRLK person, cinematic lighting, matte skin, ultra HD" combined with a carefully crafted negative prompt (e.g., "blurry, low quality, low contrast, oversaturated colors, unrealistic plastic skin, gloss, plastic, distorted, bad anatomy, low resolution, noisy") helps filter out undesirable artifacts.
    - Inference parameters such as:
      - `controlnet_conditioning_scale`: 0.5
      - `guidance_scale`: 7.5
-     - `num_inference_steps`: 45
+     - `num_inference_steps`: 30
      - `strength`: 1.0
-     - `inpaint_strength`: 1.0
-     - `denoising_strength`: 0.75  
+     - `inpaint_strength`: 0.9
+     - `denoising_strength`: 0.5
      were chosen to strike a balance between detail preservation and smooth inpainting.
 
 6. **Image post-processing**  
