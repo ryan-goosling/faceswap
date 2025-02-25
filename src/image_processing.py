@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import PIL
 from PIL import Image
-import mediapipe as mp
 
 
 # Paste the result back into the original image
