@@ -89,8 +89,8 @@ python src/infer.py \
 
 | Source Image                    | Target Image                    | Output Image                    |
 |---------------------------------|---------------------------------|---------------------------------|
-| ![source](assets/image1.jpg)    | ![target](assets/target1.jpg)   | ![output](results/result1.jpg)  |
-| ![source](assets/image2.jpg)    | ![target](assets/target2.jpg)   | ![output](results/result2.jpg)  |
-| ![source](assets/image3.jpg)    | ![target](assets/target3.jpg)   | ![output](results/result3.jpg)  |
+| ![source](assets/image1.jpg)    | ![target](assets/target1.jpg)   | ![output](assets/result1.jpg)  |
+| ![source](assets/image2.jpg)    | ![target](assets/target2.jpg)   | ![output](assets/result2.jpg)  |
+| ![source](assets/image3.jpg)    | ![target](assets/target3.jpg)   | ![output](assets/result3.jpg)  |
 
 
