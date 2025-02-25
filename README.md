@@ -1,16 +1,30 @@
 # FaceSwap
-
+| Source Image  | Output Image    | Source Image      | Output Image         | Source Image     | Output Image     |
+|---------------|-----------------|-------------------|----------------------|------------------|------------------|
+| ![target](assets/image1.jpg)   | ![output](assets/result1.jpg)  | ![target](assets/image2.jpg)   | ![output](assets/result2.jpg)  | ![target](assets/image3.jpg)   | ![output](assets/result3.jpg)  |
 ## Installation
 
-Create env, install requirements
-
+Git clone, Create env, install requirements
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+git clone https://github.com/ryan-goosling/faceswap.git
+cd faceswap
+```
+```bash
+#python3 -m venv venv
+#source venv/bin/activate  # Linux/Mac
+#venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
-
+Clone face parser
+```bash
+git clone https://github.com/yakhyo/face-parsing.git
+cd face-parsing
+pip install -r requirements.txt
+```
+Load weights
+```bash
+sh download.sh
+```
 ## Run
 ```bash
 python src/infer.py \
