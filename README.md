@@ -3,7 +3,11 @@
 |---------------|-----------------|
 | ![target](assets/image1.jpg)   | ![output](assets/result1.jpg)  |
 ## Installation
-
+This project was developed using **Python 3.8.10**.  
+Make sure you have the correct version installed:  
+```bash
+python --version
+```
 Git clone, Create env, install requirements
 ```bash
 git clone https://github.com/ryan-goosling/faceswap.git
