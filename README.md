@@ -12,6 +12,7 @@ Git clone, Create env, install requirements
 ```bash
 git clone https://github.com/ryan-goosling/faceswap.git
 cd faceswap
+mkdir tmp
 ```
 ```bash
 #python3 -m venv venv
